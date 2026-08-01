@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check-List Star Wars</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%2305070d' stroke='%23ffd76a' stroke-width='3'/%3E%3Cpolygon points='50,14 61,39 88,39 66,55 75,82 50,65 25,82 34,55 12,39 39,39' fill='%23ffd76a'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%2305070d' stroke='%23ffd76a' stroke-width='3'/%3E%3Cpolygon points='50,14 61,39 88,39 66,55 75,82 50,65 25,82 34,55 12,39 39,39' fill='%23ffd76a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Exo+2:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#05070d;
+    --panel:#0c1420;
+    --panel-line: rgba(140,170,210,0.14);
+    --gold:#ffd76a;
+    --blue:#5ec2ff;
+    --green:#6bffb0;
+    --violet:#c49bff;
+    --text:#e9eef5;
+    --dim:#7c8798;
+    --danger:#ff5d5d;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--void);
+    color:var(--text);
+    font-family:'Exo 2', sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* starfield */
+  #stars, #stars2, #stars3{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+  }
+  .layer{position:absolute; border-radius:50%; background:#fff; opacity:0.6;}
+
+  .scanline{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.015) 0px,
+      rgba(255,255,255,0.015) 1px,
+      transparent 2px,
+      transparent 3px
+    );
+    mix-blend-mode: overlay;
+  }
+
+  .wrap{
+    position:relative; z-index:2;
+    max-width:760px;
+    margin:0 auto;
+    padding:56px 20px 120px;
+  }
+
+  header{
+    text-align:center;
+    margin-bottom:44px;
+  }
+  .site-icon{
+    width:52px; height:52px;
+    margin:0 auto 14px;
+    filter: drop-shadow(0 0 10px rgba(255,215,106,0.45));
+  }
+  .eyebrow{
+    font-family:'Share Tech Mono', monospace;
+    letter-spacing:0.35em;
+    font-size:11px;
+    color:var(--blue);
+    text-transform:uppercase;
+    opacity:0.85;
+  }
+  h1{
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    font-size:clamp(28px, 6vw, 44px);
+    letter-spacing:0.06em;
+    margin:10px 0 6px;
+    background:linear-gradient(180deg, #fff4d6, var(--gold) 60%, #a87c1f);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    text-shadow:0 0 30px rgba(255,215,106,0.25);
+  }
+  .sub{
+    color:var(--dim);
+    font-size:14px;
+    font-family:'Share Tech Mono', monospace;
+    letter-spacing:0.02em;
+  }
+
+  /* next-up banner */
+  .next-up{
+    border:1px solid rgba(196,155,255,0.35);
+    background:linear-gradient(180deg, rgba(40,26,58,0.55), rgba(10,8,16,0.6));
+    border-radius:6px;
+    padding:16px 20px;
+    margin-bottom:22px;
+    backdrop-filter: blur(6px);
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .next-up::before{
+    content:"";
+    position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:var(--violet);
+    box-shadow:0 0 12px var(--violet);
+  }
+  .next-up-icon{
+    font-size:20px;
+    filter: drop-shadow(0 0 6px rgba(196,155,255,0.6));
+  }
+  .next-up-body{ flex:1; min-width:0; }
+  .next-up-label{
+    font-family:'Share Tech Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.25em;
+    text-transform:uppercase;
+    color:var(--violet);
+    margin-bottom:3px;
+  }
+  .next-up-title{
+    font-size:16px;
+    font-weight:600;
+    color:var(--text);
+  }
+  .next-up-sub{
+    font-family:'Share Tech Mono', monospace;
+    font-size:11px;
+    color:var(--dim);
+    margin-top:2px;
+  }
+  .next-up.finished{
+    border-color: rgba(107,255,176,0.35);
+  }
+  .next-up.finished::before{
+    background:var(--green);
+    box-shadow:0 0 12px var(--green);
+  }
+  .next-up.finished .next-up-label{ color:var(--green); }
+
+  /* progress console */
+  .console{
+    border:1px solid var(--panel-line);
+    background:linear-gradient(180deg, rgba(20,30,46,0.7), rgba(8,12,20,0.7));
+    border-radius:6px;
+    padding:18px 20px;
+    margin-bottom:38px;
+    backdrop-filter: blur(6px);
+    position:relative;
+    overflow:hidden;
+  }
+  .console::before{
+    content:"";
+    position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:var(--blue);
+    box-shadow:0 0 12px var(--blue);
+  }
+  .console-row{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:'Share Tech Mono', monospace;
+    font-size:12px;
+    color:var(--dim);
+    margin-bottom:10px;
+    letter-spacing:0.05em;
+  }
+  .console-row span.val{ color:var(--text); }
+  .gauge{
+    height:10px;
+    border-radius:5px;
+    background:rgba(255,255,255,0.06);
+    overflow:hidden;
+    border:1px solid var(--panel-line);
+  }
+  .gauge-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg, var(--blue), var(--green));
+    box-shadow:0 0 14px var(--blue);
+    transition:width 0.5s ease;
+  }
+
+  /* era section */
+  .era{
+    margin-bottom:34px;
+  }
+  .era-head{
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:12px;
+  }
+  .era-dot{
+    width:8px;height:8px;border-radius:50%;
+    box-shadow:0 0 8px currentColor;
+  }
+  .era-title{
+    font-family:'Orbitron', sans-serif;
+    font-size:12px;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--dim);
+  }
+  .era-line{
+    flex:1;
+    height:1px;
+    background:linear-gradient(to right, var(--panel-line), transparent);
+  }
+
+  .item{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:13px 16px;
+    margin-bottom:8px;
+    background:var(--panel);
+    border:1px solid var(--panel-line);
+    border-left:3px solid var(--era-color, var(--blue));
+    border-radius:4px;
+    transition: background 0.25s ease, transform 0.15s ease, opacity 0.3s ease;
+    cursor:pointer;
+    user-select:none;
+  }
+  .item:hover{
+    background:#101a29;
+    transform:translateX(2px);
+  }
+  .item.child{
+    margin-left:26px;
+    padding:10px 16px;
+    border-left-style:dashed;
+    opacity:0.92;
+  }
+  .item.done{
+    opacity:0.55;
+  }
+  .item.done .item-title{
+    text-decoration: line-through;
+    text-decoration-color: var(--green);
+    text-decoration-thickness: 1px;
+  }
+
+  .checkbox{
+    width:22px; height:22px;
+    min-width:22px;
+    border-radius:4px;
+    border:1.5px solid var(--dim);
+    display:flex; align-items:center; justify-content:center;
+    transition: all 0.2s ease;
+    background:rgba(255,255,255,0.02);
+  }
+  .item.done .checkbox{
+    border-color:var(--green);
+    background:radial-gradient(circle, rgba(107,255,176,0.35), rgba(107,255,176,0.05));
+    box-shadow:0 0 10px rgba(107,255,176,0.55);
+  }
+  .checkbox svg{
+    width:13px;height:13px;
+    opacity:0;
+    transform:scale(0.5);
+    transition: all 0.2s ease;
+  }
+  .item.done .checkbox svg{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  .item-body{
+    flex:1;
+    min-width:0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .item-text{ min-width:0; }
+  .item-title{
+    font-size:15px;
+    font-weight:500;
+    color:var(--text);
+  }
+  .item-title a{
+    color:inherit;
+    text-decoration:none;
+    border-bottom:1px dotted var(--blue);
+  }
+  .item-title a:hover{
+    color:var(--blue);
+  }
+  .item.child .item-title{
+    font-size:13.5px;
+    color:#c7d0dc;
+  }
+  .item-type{
+    font-family:'Share Tech Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--dim);
+    margin-top:2px;
+  }
+
+  .imdb-badge{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    font-family:'Share Tech Mono', monospace;
+    font-size:11px;
+    color:var(--gold);
+    background:rgba(255,215,106,0.08);
+    border:1px solid rgba(255,215,106,0.3);
+    border-radius:4px;
+    padding:3px 7px;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .imdb-badge.na{
+    color:var(--dim);
+    background:rgba(255,255,255,0.03);
+    border-color:var(--panel-line);
+  }
+  .imdb-badge .star{ font-size:10px; }
+  .imdb-badge .badge-source{
+    font-size:8px;
+    color:var(--dim);
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    margin-left:2px;
+  }
+  .imdb-badge.na .badge-source{ display:none; }
+
+  .group-head{
+    display:flex; align-items:center; gap:10px;
+    padding:6px 16px 2px;
+    font-family:'Share Tech Mono', monospace;
+    font-size:12px;
+    color:var(--dim);
+  }
+
+  footer{
+    text-align:center;
+    margin-top:50px;
+    font-family:'Share Tech Mono', monospace;
+    font-size:11px;
+    color:var(--dim);
+    letter-spacing:0.08em;
+  }
+  footer button{
+    background:none;
+    border:1px solid var(--panel-line);
+    color:var(--dim);
+    font-family:'Share Tech Mono', monospace;
+    font-size:11px;
+    padding:8px 14px;
+    border-radius:4px;
+    cursor:pointer;
+    margin-top:14px;
+    transition: all 0.2s ease;
+  }
+  footer button:hover{
+    color:var(--danger);
+    border-color:var(--danger);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+<div class="scanline"></div>
+
+<div class="wrap">
+  <header>
+    <svg class="site-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="48" fill="#05070d" stroke="#ffd76a" stroke-width="3"/>
+      <polygon points="50,14 61,39 88,39 66,55 75,82 50,65 25,82 34,55 12,39 39,39" fill="#ffd76a"/>
+    </svg>
+    <div class="eyebrow">Archives Impériales · Dossier de visionnage</div>
+    <h1>CHECK-LIST STAR WARS</h1>
+    <div class="sub">ordre de visionnage recommandé — cochez ce que vous avez déjà vu</div>
+  </header>
+
+  <div id="next-up-container"></div>
+
+  <div class="console">
+    <div class="console-row">
+      <span>PROGRESSION</span>
+      <span class="val" id="progress-text">0 / 0</span>
+    </div>
+    <div class="gauge"><div class="gauge-fill" id="gauge-fill"></div></div>
+  </div>
+
+  <div id="list"></div>
+
+  <footer>
+    <div id="save-status">état sauvegardé automatiquement</div>
+    <button id="reset-btn">Réinitialiser le registre</button>
+  </footer>
+</div>
+
+<script>
+const DATA = [
+  {era:'republic', label:'Ère de la République', color:'#5ec2ff', items:[
+    {id:'acolyte', title:"L'Acolyte", type:'Série', rating:{score:6.0, source:'IMDb'}},
+    {id:'menace-fantome', title:'La Menace Fantôme', type:'Film', rating:{score:6.5, source:'IMDb'}},
+    {id:'attaque-clones', title:"L'Attaque des Clones", type:'Film', rating:{score:6.6, source:'IMDb'}},
+    {id:'clone-wars-film', title:'Clone Wars (Le Film)', type:'Film', rating:{score:5.9, source:'IMDb'}},
+    {id:'clone-wars', title:'Clone Wars', type:'Série', children:[
+      {id:'cw-s1', title:'Saison 1', rating:{score:6.5, source:'IMDb'}},
+      {id:'cw-s2', title:'Saison 2', rating:{score:7.5, source:'IMDb'}},
+      {id:'cw-s3', title:'Saison 3', rating:{score:7.7, source:'IMDb'}},
+      {id:'cw-s4', title:'Saison 4', rating:{score:8.0, source:'IMDb'}},
+      {id:'cw-s5', title:'Saison 5', rating:{score:8.2, source:'IMDb'}},
+      {id:'cw-s6', title:'Saison 6', rating:{score:8.5, source:'IMDb'}},
+      {id:'cw-s7', title:'Saison 7', rating:{score:9.1, source:'IMDb'}},
+    ]},
+    {id:'revanche-sith', title:'La Revanche des Sith', type:'Film', rating:{score:7.6, source:'IMDb'}},
+  ]},
+  {era:'empire', label:"Ère de l'Empire", color:'#ffd76a', items:[
+    {id:'bad-batch', title:'The Bad Batch', type:'Série', children:[
+      {id:'bb-s1', title:'Saison 1', rating:{score:7.8, source:'IMDb'}},
+      {id:'bb-s2', title:'Saison 2', rating:{score:7.7, source:'IMDb'}},
+      {id:'bb-s3', title:'Saison 3', rating:{score:8.0, source:'IMDb'}},
+    ]},
+    {id:'maul', title:'Maul : Seigneur des Ombres', type:'Série', rating:{score:100, source:'RT', suffix:'%'}},
+    {id:'solo', title:'Solo', type:'Film', rating:{score:6.9, source:'IMDb'}},
+    {id:'obi-wan', title:'Obi-Wan', type:'Série', rating:{score:7.1, source:'IMDb'}},
+    {id:'rebels', title:'Rebels', type:'Série', children:[
+      {id:'rebels-s1', title:'Saison 1', rating:{score:7.8, source:'IMDb'}},
+      {id:'rebels-s2', title:'Saison 2', rating:{score:7.7, source:'IMDb'}},
+      {id:'rebels-s3', title:'Saison 3', rating:{score:8.5, source:'IMDb'}},
+      {id:'rebels-s4', title:'Saison 4', rating:{score:9.0, source:'IMDb'}},
+    ]},
+    {id:'andor', title:'Andor', type:'Série', children:[
+      {id:'andor-s1', title:'Saison 1', rating:{score:8.4, source:'IMDb'}},
+      {id:'andor-s2', title:'Saison 2', rating:{score:9.0, source:'IMDb'}},
+    ]},
+    {id:'rogue-one', title:'Rogue One', type:'Film', rating:{score:7.8, source:'IMDb'}},
+    {id:'nouvel-espoir', title:'Un Nouvel Espoir', type:'Film', rating:{score:8.6, source:'IMDb'}},
+    {id:'empire-contre-attaque', title:"L'Empire Contre-Attaque", type:'Film', rating:{score:8.7, source:'IMDb'}},
+    {id:'retour-jedi', title:'Le Retour du Jedi', type:'Film', rating:{score:8.3, source:'IMDb'}},
+  ]},
+  {era:'nr', label:'Nouvelle République', color:'#6bffb0', items:[
+    {id:'mandalorien', title:'The Mandalorian', type:'Série', children:[
+      {id:'mando-s1', title:'Saison 1', rating:{score:8.9, source:'IMDb'}},
+      {id:'mando-s2', title:'Saison 2', rating:{score:9.3, source:'IMDb'}},
+      {id:'boba-fett', title:'Le Livre de Boba Fett', rating:{score:7.8, source:'IMDb'}},
+      {id:'mando-s3', title:'Saison 3', rating:{score:7.0, source:'IMDb'}},
+    ]},
+    {id:'mando-film', title:'The Mandalorian and Grogu', link:'https://fr.wikipedia.org/wiki/The_Mandalorian_and_Grogu', type:'Film', rating:{score:88, source:'RT public', suffix:'%'}},
+    {id:'ahsoka', title:'Ahsoka', type:'Série', children:[
+      {id:'ahsoka-s1', title:'Saison 1', rating:{score:7.6, source:'IMDb'}},
+      {id:'ahsoka-s2', title:'Saison 2', rating:null},
+    ]},
+    {id:'skeleton-crew', title:'Skeleton Crew', type:'Série', rating:{score:6.9, source:'IMDb'}},
+  ]},
+  {era:'sequel', label:'Ère de la Résistance', color:'#c49bff', items:[
+    {id:'resistance-s1', title:'Résistance (Saison 1)', type:'Série', rating:{score:5.7, source:'IMDb'}},
+    {id:'reveil-force', title:'Le Réveil de la Force', type:'Film', rating:{score:7.8, source:'IMDb'}},
+    {id:'dernier-jedi', title:'Le Dernier Jedi', type:'Film', rating:{score:6.9, source:'IMDb'}},
+    {id:'resistance-s2', title:'Résistance (Saison 2)', type:'Série', rating:{score:6.1, source:'IMDb'}},
+    {id:'ascension-skywalker', title:"L'Ascension de Skywalker", type:'Film', rating:{score:6.3, source:'IMDb'}},
+  ]},
+];
+
+const STORAGE_KEY = 'sw-checklist-state';
+let checked = {};
+
+function checkIcon(){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#6bffb0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+}
+
+// Liste ordonnée et aplatie de tous les éléments cochables, avec leur contexte (série parente + ère)
+function flattenOrdered(){
+  const flat = [];
+  DATA.forEach(section => section.items.forEach(it => {
+    if(it.children){
+      it.children.forEach(c => flat.push({id:c.id, title:c.title, rating:c.rating, parent:it.title, era:section.label}));
+    } else {
+      flat.push({id:it.id, title:it.title, rating:it.rating, parent:null, era:section.label});
+    }
+  }));
+  return flat;
+}
+
+function allCheckableIds(){
+  return flattenOrdered().map(it => it.id);
+}
+
+function imdbBadge(rating){
+  if(!rating){
+    return `<div class="imdb-badge na" title="Pas encore de note disponible"><span class="star">☆</span>N/A</div>`;
+  }
+  const value = rating.suffix ? `${rating.score}${rating.suffix}` : rating.score.toFixed(1);
+  return `<div class="imdb-badge" title="Source : ${rating.source}"><span class="star">★</span>${value}<span class="badge-source">${rating.source}</span></div>`;
+}
+
+function renderNextUp(){
+  const container = document.getElementById('next-up-container');
+  const flat = flattenOrdered();
+  const next = flat.find(it => !checked[it.id]);
+  if(!next){
+    container.innerHTML = `
+      <div class="next-up finished">
+        <div class="next-up-icon">✓</div>
+        <div class="next-up-body">
+          <div class="next-up-label">Registre complet</div>
+          <div class="next-up-title">Vous avez tout regardé, que la Force soit avec vous</div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+  const subtitle = next.parent ? `${next.parent} — ${next.era}` : next.era;
+  container.innerHTML = `
+    <div class="next-up">
+      <div class="next-up-icon">▶</div>
+      <div class="next-up-body">
+        <div class="next-up-label">Prochain à regarder</div>
+        <div class="next-up-title">${next.title}</div>
+        <div class="next-up-sub">${subtitle}</div>
+      </div>
+    </div>
+  `;
+}
+
+function render(){
+  const listEl = document.getElementById('list');
+  listEl.innerHTML = '';
+  DATA.forEach(section => {
+    const eraDiv = document.createElement('div');
+    eraDiv.className = 'era';
+    eraDiv.innerHTML = `
+      <div class="era-head">
+        <div class="era-dot" style="color:${section.color}; background:${section.color};"></div>
+        <div class="era-title">${section.label}</div>
+        <div class="era-line"></div>
+      </div>
+    `;
+    section.items.forEach(it => {
+      if(it.children){
+        const groupHead = document.createElement('div');
+        groupHead.className = 'group-head';
+        groupHead.textContent = it.title;
+        eraDiv.appendChild(groupHead);
+        it.children.forEach(c => eraDiv.appendChild(renderItem(c, section.color, true)));
+      } else {
+        eraDiv.appendChild(renderItem(it, section.color, false));
+      }
+    });
+    listEl.appendChild(eraDiv);
+  });
+  renderNextUp();
+  updateProgress();
+}
+
+function renderItem(it, color, isChild){
+  const div = document.createElement('div');
+  div.className = 'item' + (isChild ? ' child' : '') + (checked[it.id] ? ' done' : '');
+  div.style.setProperty('--era-color', color);
+  const titleHtml = it.link
+    ? `<a href="${it.link}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${it.title}</a>`
+    : it.title;
+  div.innerHTML = `
+    <div class="checkbox">${checkIcon()}</div>
+    <div class="item-body">
+      <div class="item-text">
+        <div class="item-title">${titleHtml}</div>
+        ${it.type ? `<div class="item-type">${it.type}</div>` : ''}
+      </div>
+      ${imdbBadge(it.rating)}
+    </div>
+  `;
+  div.addEventListener('click', () => toggle(it.id));
+  return div;
+}
+
+function toggle(id){
+  checked[id] = !checked[id];
+  save();
+  render();
+}
+
+function updateProgress(){
+  const ids = allCheckableIds();
+  const done = ids.filter(id => checked[id]).length;
+  document.getElementById('progress-text').textContent = `${done} / ${ids.length}`;
+  document.getElementById('gauge-fill').style.width = ids.length ? `${(done/ids.length)*100}%` : '0%';
+}
+
+function save(){
+  const statusEl = document.getElementById('save-status');
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(checked));
+    statusEl.textContent = 'état sauvegardé automatiquement';
+  }catch(e){
+    statusEl.textContent = "sauvegarde indisponible — l'état reste local à cette session";
+  }
+}
+
+function load(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      checked = JSON.parse(raw);
+    }
+  }catch(e){
+    checked = {};
+  }
+  render();
+}
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  if(confirm('Réinitialiser tout le registre de visionnage ?')){
+    checked = {};
+    save();
+    render();
+  }
+});
+
+// starfield generation
+(function starfield(){
+  const container = document.getElementById('stars');
+  const count = 90;
+  for(let i=0;i<count;i++){
+    const s = document.createElement('div');
+    s.className = 'layer';
+    const size = Math.random()*2 + 0.5;
+    s.style.width = size+'px';
+    s.style.height = size+'px';
+    s.style.left = Math.random()*100+'%';
+    s.style.top = Math.random()*100+'%';
+    s.style.opacity = (Math.random()*0.6+0.2).toFixed(2);
+    container.appendChild(s);
+  }
+})();
+
+load();
+</script>
+
+</body>
+</html>
