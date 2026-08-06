@@ -37,7 +37,52 @@
   #stars, #stars2, #stars3{
     position:fixed; inset:0; z-index:0; pointer-events:none;
   }
-  .layer{position:absolute; border-radius:50%; background:#fff; opacity:0.6;}
+  .layer{position:absolute; border-radius:50%; background:#fff; opacity:0.6; animation:twinkle ease-in-out infinite;}
+  @keyframes twinkle{
+    0%,100%{opacity:var(--tw-min,0.15);}
+    50%{opacity:var(--tw-max,0.9);}
+  }
+
+  .planet{
+    position:fixed;
+    z-index:0;
+    pointer-events:none;
+    border-radius:50%;
+    top:-180px;
+    right:-160px;
+    width:420px;
+    height:420px;
+    background:radial-gradient(circle at 35% 32%, #3a4a6b 0%, #1c2740 42%, #0a0f1c 78%);
+    box-shadow:
+      inset -30px -20px 60px rgba(0,0,0,0.55),
+      inset 18px 14px 40px rgba(120,150,200,0.12),
+      0 0 90px rgba(94,194,255,0.08);
+    opacity:0.55;
+  }
+  .planet::before{
+    content:"";
+    position:absolute; inset:0;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 62% 60%, rgba(0,0,0,0.35) 0 22px, transparent 23px),
+      radial-gradient(circle at 25% 70%, rgba(0,0,0,0.3) 0 14px, transparent 15px),
+      radial-gradient(circle at 70% 25%, rgba(0,0,0,0.25) 0 10px, transparent 11px);
+  }
+  .planet-ring{
+    position:fixed;
+    z-index:0;
+    pointer-events:none;
+    top:6px; right:-120px;
+    width:560px; height:150px;
+    border:1px solid rgba(94,194,255,0.16);
+    border-radius:50%;
+    transform:rotate(-14deg);
+  }
+
+  @media (max-width:640px){
+    .planet{ width:260px; height:260px; top:-110px; right:-110px; }
+    .planet-ring{ width:360px; height:100px; top:10px; right:-90px; }
+  }
 
   .scanline{
     position:fixed; inset:0; z-index:1; pointer-events:none;
@@ -61,6 +106,35 @@
   header{
     text-align:center;
     margin-bottom:44px;
+    position:relative;
+    padding:22px 10px;
+  }
+  header::before, header::after,
+  .hud-corner-l, .hud-corner-r{
+    content:"";
+    position:absolute;
+    width:22px; height:22px;
+    border:1.5px solid rgba(255,215,106,0.4);
+    opacity:0.8;
+  }
+  header::before{
+    top:0; left:calc(50% - 200px);
+    border-right:none; border-bottom:none;
+  }
+  header::after{
+    top:0; right:calc(50% - 200px);
+    border-left:none; border-bottom:none;
+  }
+  .hud-corner-l{
+    bottom:0; left:calc(50% - 200px);
+    border-right:none; border-top:none;
+  }
+  .hud-corner-r{
+    bottom:0; right:calc(50% - 200px);
+    border-left:none; border-top:none;
+  }
+  @media (max-width:520px){
+    header::before,header::after,.hud-corner-l,.hud-corner-r{ display:none; }
   }
   .site-icon{
     width:52px; height:52px;
@@ -335,6 +409,21 @@
   }
   .imdb-badge.na .badge-source{ display:none; }
 
+  .optional-badge{
+    display:inline-flex;
+    align-items:center;
+    font-family:'Share Tech Mono', monospace;
+    font-size:9px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--violet);
+    background:rgba(196,155,255,0.1);
+    border:1px solid rgba(196,155,255,0.35);
+    border-radius:3px;
+    padding:1px 6px;
+    margin-top:3px;
+  }
+
   .group-head{
     display:flex; align-items:center; gap:10px;
     padding:6px 16px 2px;
@@ -376,10 +465,14 @@
 <body>
 
 <div id="stars"></div>
+<div class="planet"></div>
+<div class="planet-ring"></div>
 <div class="scanline"></div>
 
 <div class="wrap">
   <header>
+    <div class="hud-corner-l"></div>
+    <div class="hud-corner-r"></div>
     <svg class="site-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <circle cx="50" cy="50" r="48" fill="#05070d" stroke="#ffd76a" stroke-width="3"/>
       <polygon points="50,14 61,39 88,39 66,55 75,82 50,65 25,82 34,55 12,39 39,39" fill="#ffd76a"/>
@@ -426,11 +519,14 @@ const DATA = [
     {id:'revanche-sith', title:'La Revanche des Sith', type:'Film', rating:{score:7.6, source:'IMDb'}},
   ]},
   {era:'empire', label:"Ère de l'Empire", color:'#ffd76a', items:[
+    {id:'tales-jedi', title:'Tales of the Jedi', type:'Série anthologie · 6 épisodes', rating:{score:8.1, source:'IMDb'}},
     {id:'bad-batch', title:'The Bad Batch', type:'Série', children:[
       {id:'bb-s1', title:'Saison 1', rating:{score:7.8, source:'IMDb'}},
       {id:'bb-s2', title:'Saison 2', rating:{score:7.7, source:'IMDb'}},
       {id:'bb-s3', title:'Saison 3', rating:{score:8.0, source:'IMDb'}},
     ]},
+    {id:'tales-empire', title:'Tales of the Empire', type:'Série anthologie · 6 épisodes', rating:{score:7.6, source:'IMDb'}},
+    {id:'tales-underworld', title:'Tales of the Underworld', type:'Série anthologie · 6 épisodes', rating:{score:7.2, source:'IMDb'}},
     {id:'maul', title:'Maul : Seigneur des Ombres', type:'Série', rating:{score:100, source:'RT', suffix:'%'}},
     {id:'solo', title:'Solo', type:'Film', rating:{score:6.9, source:'IMDb'}},
     {id:'obi-wan', title:'Obi-Wan', type:'Série', rating:{score:7.1, source:'IMDb'}},
@@ -469,6 +565,7 @@ const DATA = [
     {id:'dernier-jedi', title:'Le Dernier Jedi', type:'Film', rating:{score:6.9, source:'IMDb'}},
     {id:'resistance-s2', title:'Résistance (Saison 2)', type:'Série', rating:{score:6.1, source:'IMDb'}},
     {id:'ascension-skywalker', title:"L'Ascension de Skywalker", type:'Film', rating:{score:6.3, source:'IMDb'}},
+    {id:'ninth-jedi', title:'Visions Presents : The Ninth Jedi', type:'Série anime · hors canon · 8 épisodes', optional:true, rating:null},
   ]},
 ];
 
@@ -576,6 +673,7 @@ function renderItem(it, color, isChild){
       <div class="item-text">
         <div class="item-title">${titleHtml}</div>
         ${it.type ? `<div class="item-type">${it.type}</div>` : ''}
+        ${it.optional ? `<div class="optional-badge">Optionnel</div>` : ''}
       </div>
       ${imdbBadge(it.rating)}
     </div>
@@ -640,6 +738,10 @@ document.getElementById('reset-btn').addEventListener('click', () => {
     s.style.left = Math.random()*100+'%';
     s.style.top = Math.random()*100+'%';
     s.style.opacity = (Math.random()*0.6+0.2).toFixed(2);
+    s.style.setProperty('--tw-min', (Math.random()*0.15+0.05).toFixed(2));
+    s.style.setProperty('--tw-max', (Math.random()*0.4+0.6).toFixed(2));
+    s.style.animationDuration = (Math.random()*3.5+2.5).toFixed(2)+'s';
+    s.style.animationDelay = (Math.random()*4).toFixed(2)+'s';
     container.appendChild(s);
   }
 })();
