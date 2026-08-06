@@ -9,10 +9,12 @@ Une page web interactive (fichier HTML unique, sans dépendance externe) permett
 - Cases à cocher pour chaque film, série et saison
 - Ordre de visionnage chronologique recommandé, organisé par ère
 - Note (IMDb ou Rotten Tomatoes selon disponibilité) affichée pour chaque film/saison
+- Badge "Optionnel" pour les contenus hors canon officiel (ex. Visions)
 - Encadré "Prochain à regarder" mis à jour automatiquement selon la progression
 - Barre de progression globale
 - Sauvegarde automatique de l'état coché
 - Bouton de réinitialisation du registre
+- Décor spatial animé : champ d'étoiles scintillantes, planète en arrière-plan et coins façon HUD de cockpit
 
 ## Contenu de la check-list
 
@@ -25,7 +27,10 @@ Une page web interactive (fichier HTML unique, sans dépendance externe) permett
 - La Revanche des Sith
 
 ### Ère de l'Empire
+- Tales of the Jedi
 - The Bad Batch *(Saisons 1 à 3)*
+- Tales of the Empire
+- Tales of the Underworld
 - Maul : Seigneur des Ombres
 - Solo
 - Obi-Wan
@@ -47,7 +52,8 @@ Une page web interactive (fichier HTML unique, sans dépendance externe) permett
 - Le Réveil de la Force
 - Le Dernier Jedi
 - L'Ascension de Skywalker
+- Visions Presents : The Ninth Jedi *(optionnel, hors canon)*
 
 ## Utilisation
 
-Ouvrir simplement le fichier `checklist-star-wars.html` dans un navigateur. Aucune installation ni dépendance nécessaire.
+Ouvrir simplement le fichier `index.html` dans un navigateur. Aucune installation ni dépendance nécessaire.
